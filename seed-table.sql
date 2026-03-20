@@ -1,12 +1,12 @@
 -- 1. WAREHOUSE
 INSERT INTO WAREHOUSE (WarehouseID, [Address], [Size], Temperature, Security) VALUES
-(1, '123 Logistics Way, Singapore', '50000 sqft', 'Ambient', 'High'),
-(2, '45 Cold Storage Rd, Melbourne', '30000 sqft', 'Refrigerated', 'Medium'),
-(3, '88 Frozen Blvd, Oslo', '20000 sqft', 'Frozen', 'High'),
-(4, '12 Industrial St, Texas', '100000 sqft', 'Ambient', 'High'),
-(5, '55 Portside Ave, Rotterdam', '75000 sqft', 'Ambient', 'Medium'),
+(1, '123 Changi North, Singapore', '50000 sqft', 'Ambient', 'High'),
+(2, '45 Tuas South, Singapore', '30000 sqft', 'Refrigerated', 'Medium'),
+(3, '88 Jurong Island, Singapore', '20000 sqft', 'Frozen', 'High'),
+(4, '12 Sunset Blvd, Los Angeles, USA', '100000 sqft', 'Ambient', 'High'),
+(5, '55 Hollywood Way, Los Angeles, USA', '75000 sqft', 'Ambient', 'Medium'),
 (6, '99 Alpine Rd, Zurich', '15000 sqft', 'Refrigerated', 'High'),
-(7, '101 Desert View, Dubai', '60000 sqft', 'Ambient', 'High'),
+(7, '101 Bangkok Central, Thailand', '60000 sqft', 'Ambient', 'High'),
 (8, '22 Sakura Ln, Tokyo', '40000 sqft', 'Ambient', 'Medium');
 
 -- 2. ZONE
@@ -32,26 +32,26 @@ INSERT INTO CLIENT (ClientID, ServiceTier, CompanyName, StartDate, ContactPerson
 (8, 'Platinum', 'Luxury Goods Co', '2023-09-30', 'Hannah Abbott');
 
 -- 5. PRODUCT
-INSERT INTO PRODUCT (ProductID, [Name], Brand, Cost, Category, Price, [Length], Width, Height, HandlingRequirements) VALUES
-(101, 'Smartphone X', 'TechBrand', 400.00, 'Electronics', 899.00, 15.0, 7.5, 0.8, 'High-Value'),
-(102, 'Frozen Peas 1kg', 'GreenFarm', 1.50, 'Food', 3.50, 20.0, 15.0, 5.0, 'Temperature-Controlled'),
-(103, 'Brake Pads', 'FastStop', 45.00, 'Automotive', 120.00, 12.0, 8.0, 4.0, 'Heavy'),
-(104, 'Cotton T-Shirt', 'BasicWear', 5.00, 'Apparel', 19.99, 30.0, 25.0, 1.0, 'None'),
-(105, 'Insulin Vials', 'MediCure', 50.00, 'Pharma', 150.00, 5.0, 5.0, 8.0, 'Fragile/Temp-Controlled'),
-(106, 'Solar Panel', 'SunPower', 200.00, 'Energy', 450.00, 160.0, 100.0, 5.0, 'Fragile'),
-(107, 'Organic Milk', 'DairyPure', 2.00, 'Food', 4.50, 10.0, 10.0, 25.0, 'Refrigerated'),
-(108, 'Leather Handbag', 'Luxe', 300.00, 'Luxury', 1200.00, 35.0, 15.0, 25.0, 'High-Value');
+INSERT INTO PRODUCT (ProductID, [Name], Brand, Cost, Category, Price) VALUES
+(101, 'Smartphone X', 'TechBrand', 400.00, 'Electronics', 899.00),
+(102, 'Frozen Peas', 'GreenFarm', 1.50, 'Food', 3.50),
+(103, 'Brake Pads', 'FastStop', 45.00, 'Automotive', 120.00),
+(104, 'Cotton T-Shirt', 'BasicWear', 5.00, 'Apparel', 19.99),
+(105, 'Insulin Vials', 'MediCure', 50.00, 'Pharma', 150.00),
+(106, 'Solar Panel', 'SunPower', 200.00, 'Energy', 450.00),
+(107, 'Organic Milk', 'DairyPure', 2.00, 'Food', 4.50),
+(108, 'Leather Bag', 'Luxe', 300.00, 'Luxury', 1200.00);
 
 -- 6. INVENTORY
 INSERT INTO INVENTORY (InventorySerial, WarehouseID, ProductID, ClientID, RQty, HQty, SQty, OQty, [Location]) VALUES
-(1001, 1, 101, 1, 50, 500, 450, 1000, 'A-01'),
-(1002, 2, 102, 2, 100, 2000, 1900, 5000, 'C-10'),
-(1003, 4, 103, 3, 20, 300, 280, 500, 'E-11'),
-(1004, 5, 104, 4, 200, 1500, 1300, 3000, 'F-09'),
-(1005, 3, 105, 5, 10, 100, 90, 200, 'D-02'),
-(1006, 6, 106, 6, 5, 50, 45, 100, 'G-03'),
-(1007, 2, 107, 2, 50, 800, 750, 1000, 'C-10'),
-(1008, 1, 108, 8, 15, 60, 45, 100, 'B-05');
+(1001, 1, 101, 1, 10, 100, 90, 200, 'LOC-01'),
+(1002, 1, 102, 2, 10, 100, 90, 200, 'LOC-02'),
+(1003, 1, 103, 3, 10, 100, 90, 200, 'LOC-03'),
+(1004, 4, 101, 1, 10, 100, 90, 200, 'LOC-04'),
+(1005, 4, 104, 4, 10, 100, 90, 200, 'LOC-05'),
+(1006, 7, 106, 6, 10, 100, 90, 200, 'LOC-06'),
+(1007, 2, 107, 2, 10, 100, 90, 200, 'LOC-07'),
+(1008, 3, 108, 8, 10, 100, 90, 200, 'LOC-08');
 
 -- 7. INVENTORY_LOG
 INSERT INTO INVENTORY_LOG (InventorySerial, WarehouseID, ProductID, ClientID, [Timestamp], Movement, Reason) VALUES
@@ -66,14 +66,14 @@ INSERT INTO INVENTORY_LOG (InventorySerial, WarehouseID, ProductID, ClientID, [T
 
 -- 8. SUPPLIER
 INSERT INTO SUPPLIER (SupplierID, Country, [Name], PaymentTerms) VALUES
-(1, 'China', 'Shenzhen Electronics', 'Net 30'),
-(2, 'USA', 'AgriCorp Ohio', 'Net 15'),
-(3, 'Germany', 'AutoTeile GmbH', 'COD'),
-(4, 'Vietnam', 'EcoTextiles', 'Net 60'),
-(5, 'Switzerland', 'SwissPharma Lab', 'Net 30'),
-(6, 'Japan', 'Kyoto Optics', 'Net 30'),
-(7, 'Brazil', 'Amazonia Timber', 'Net 45'),
-(8, 'Italy', 'Milan Fashion Hub', 'Net 30');
+(1, 'China', 'SG-Only Supplier', 'Net 30'), -- Designed for Q5
+(2, 'USA', 'Global Supply Co', 'Net 15'),
+(3, 'Germany', 'EuroParts', 'COD'),
+(4, 'Thailand', 'Thai Logistics', 'Net 30'),
+(5, 'Singapore', 'Merlion Mfg', 'Net 30'),
+(6, 'Japan', 'Nippon Export', 'Net 30'),
+(7, 'India', 'Bharat Tech', 'Net 45'),
+(8, 'Italy', 'Venezia Goods', 'Net 30');
 
 -- 9. SUPPLY
 INSERT INTO SUPPLY ([Period], ProductID, ClientID, SupplierID, LeadTime) VALUES
@@ -88,18 +88,18 @@ INSERT INTO SUPPLY ([Period], ProductID, ClientID, SupplierID, LeadTime) VALUES
 
 -- 10. PURCHASEORDER
 INSERT INTO PURCHASEORDER (OrderID, OrderDate, [Status], [Value]) VALUES
-(5001, '2026-02-01', 'Fully Received', 45000.00),
-(5002, '2026-02-05', 'Confirmed', 12000.00),
-(5003, '2026-02-10', 'Submitted', 8500.00),
-(5004, '2026-02-15', 'Draft', 3200.00),
-(5005, '2026-02-20', 'Partially Received', 60000.00),
-(5006, '2026-03-01', 'Cancelled', 1500.00),
-(5007, '2026-03-05', 'Confirmed', 25000.00),
-(5008, '2026-03-10', 'Submitted', 54000.00);
+(5001, '2024-05-10', 'Fully Received', 100000.00),
+(5002, '2024-05-15', 'Fully Received', 150000.00),
+(5003, '2024-06-20', 'Fully Received', 80000.00),
+(5004, '2025-11-01', 'Fully Received', 50000.00),
+(5005, '2025-11-15', 'Fully Received', 90000.00),
+(5006, '2025-12-05', 'Fully Received', 120000.00),
+(5007, '2026-01-10', 'Submitted', 200000.00),
+(5008, '2026-01-20', 'Submitted', 300000.00);
 
 -- 11. CLIENT_HAS_PURCHASEORDER
 INSERT INTO CLIENT_HAS_PURCHASEORDER (ClientID, OrderID) VALUES
-(1, 5001), (2, 5002), (3, 5003), (4, 5004), (5, 5005), (6, 5006), (7, 5007), (8, 5008);
+(1, 5001), (2, 5002), (3, 5003), (4, 5004), (1, 5005), (6, 5006), (2, 5007), (8, 5008);
 
 -- 12. ITEM
 INSERT INTO ITEM (ItemSerial, ProductID) VALUES
@@ -119,14 +119,17 @@ INSERT INTO ORDERITEM (ItemSerial, OrderID, ExpDelDate, UnitPrice, OrderedQty) V
 
 -- 14. SHIPMENT
 INSERT INTO SHIPMENT (ShipmentID, ExpShippedDate, ActShippedDate, OriginalLocation, TrackingNum, ShippedDate, OrderID) VALUES
-(7001, '2026-02-02', '2026-02-02', 'Shenzhen Port', 'TRK001', '2026-02-02', 5001),
-(7002, '2026-02-06', '2026-02-07', 'Ohio Hub', 'TRK002', '2026-02-07', 5002),
-(7003, '2026-02-11', '2026-02-11', 'Hamburg Port', 'TRK003', '2026-02-11', 5003),
-(7004, '2026-02-16', NULL, 'Vietnam Wharf', 'TRK004', NULL, 5004),
-(7005, '2026-02-21', '2026-02-21', 'Swiss Rail', 'TRK005', '2026-02-21', 5005),
-(7006, '2026-03-02', NULL, 'Kyoto Plant', 'TRK006', NULL, 5006),
-(7007, '2026-03-06', '2026-03-07', 'Ohio Hub', 'TRK007', '2026-03-07', 5007),
-(7008, '2026-03-11', '2026-03-11', 'Milan Port', 'TRK008', '2026-03-11', 5008);
+-- On time (Lead time ~1 month)
+(7001, '2024-05-11', '2024-05-11', 'China Port', 'TRK001', '2024-05-11', 5001), 
+-- Delayed > 6 months (Q7)
+(7002, '2024-05-16', '2024-12-20', 'Suez Canal', 'TRK002', '2024-05-16', 5002), 
+(7003, '2024-06-21', '2024-06-25', 'Hamburg', 'TRK003', '2024-06-21', 5003),
+(7004, '2025-11-02', '2025-11-05', 'Vietnam', 'TRK004', '2025-11-02', 5004),
+-- Delayed > 6 months (Q7)
+(7005, '2025-11-16', '2026-06-30', 'Panama', 'TRK005', '2025-11-16', 5005),
+(7006, '2025-12-06', '2025-12-10', 'Kyoto', 'TRK006', '2025-12-06', 5006),
+(7007, '2026-01-11', '2026-01-15', 'Mumbai', 'TRK007', '2026-01-11', 5007),
+(7008, '2026-01-21', '2026-01-25', 'Milan', 'TRK008', '2026-01-21', 5008);
 
 -- 15. SHIPITEM
 INSERT INTO SHIPITEM (ItemSerial, ShipmentID, ShippedQty, ExpArrDate) VALUES
@@ -177,8 +180,15 @@ INSERT INTO SUPPLIER_HAS_PURCHASEORDER (OrderID, SupplierID) VALUES
 
 -- 20. SHIPMENT_HAS_SUPPLIER
 INSERT INTO SHIPMENT_HAS_SUPPLIER (ShipmentID, SupplierID) VALUES
-(7001, 1), (7002, 2), (7003, 3), (7004, 4), (7005, 5), (7006, 6), (7007, 2), (7008, 8);
+(7001, 1), (7002, 1), (7003, 2), (7004, 2), (7005, 1), (7006, 4), (7007, 1), (7008, 1);
 
 -- 21. SHIPMENT_TO_WAREHOUSE
 INSERT INTO SHIPMENT_TO_WAREHOUSE (ShipmentID, WarehouseID) VALUES
-(7001, 1), (7002, 2), (7003, 3), (7004, 4), (7005, 5), (7006, 6), (7007, 7), (7008, 8);
+(7001, 1), -- Singapore
+(7002, 1), -- Singapore
+(7003, 4), -- LA USA
+(7004, 4), -- LA USA
+(7005, 1), -- Singapore
+(7006, 7), -- Thailand
+(7007, 2), -- Singapore
+(7008, 3); -- Singapore
