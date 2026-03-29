@@ -86,27 +86,29 @@ INSERT INTO SUPPLY ([Period], ProductID, ClientID, SupplierID, LeadTime) VALUES
 ('2026-Q1', 107, 2, 2, 5),
 ('2026-Q1', 108, 8, 8, 45);
 
--- 10. PURCHASEORDER
+--- 10. PURCHASEORDER
 INSERT INTO PURCHASEORDER (OrderID, OrderDate, [Status], [Value]) VALUES
 (5001, '2024-05-10', 'Fully Received', 100000.00),
 (5002, '2024-05-15', 'Fully Received', 150000.00),
 (5003, '2024-06-20', 'Fully Received', 80000.00),
 (5004, '2025-11-01', 'Fully Received', 50000.00),
-(5005, '2025-11-15', 'Fully Received', 90000.00),
-(5006, '2025-12-05', 'Fully Received', 120000.00),
-(5007, '2026-01-10', 'Submitted', 200000.00),
+(5005, '2024-08-01', 'Fully Received', 90000.00), -- Date fixed for Shipment 7013
+(5006, '2025-03-01', 'Fully Received', 120000.00), -- Date fixed for Shipment 7014
+(5007, '2025-07-01', 'Submitted', 200000.00),      -- Date fixed for Shipment 7015
 (5008, '2026-01-20', 'Submitted', 300000.00);
 
 -- 11. CLIENT_HAS_PURCHASEORDER
 INSERT INTO CLIENT_HAS_PURCHASEORDER (ClientID, OrderID) VALUES
 (1, 5001), (2, 5002), (3, 5003), (4, 5004), (1, 5005), (6, 5006), (2, 5007), (8, 5008);
 
--- 12. ITEM
+-- 12. ITEM (Added SN-1009 to SN-1015)
 INSERT INTO ITEM (ItemSerial, ProductID) VALUES
 ('SN-1001', 101), ('SN-1002', 102), ('SN-1003', 103), ('SN-1004', 104),
-('SN-1005', 105), ('SN-1006', 106), ('SN-1007', 107), ('SN-1008', 108);
+('SN-1005', 105), ('SN-1006', 106), ('SN-1007', 107), ('SN-1008', 108),
+('SN-1009', 101), ('SN-1010', 102), ('SN-1011', 103), ('SN-1012', 104),
+('SN-1013', 105), ('SN-1014', 106), ('SN-1015', 107);
 
--- 13. ORDERITEM
+-- 13. ORDERITEM (Mapping the new items to the orders)
 INSERT INTO ORDERITEM (ItemSerial, OrderID, ExpDelDate, UnitPrice, OrderedQty) VALUES
 ('SN-1001', 5001, '2026-02-15', 400.00, 100),
 ('SN-1002', 5002, '2026-02-12', 1.50, 8000),
@@ -115,28 +117,44 @@ INSERT INTO ORDERITEM (ItemSerial, OrderID, ExpDelDate, UnitPrice, OrderedQty) V
 ('SN-1005', 5005, '2026-03-10', 50.00, 1200),
 ('SN-1006', 5006, '2026-04-01', 200.00, 10),
 ('SN-1007', 5007, '2026-03-20', 2.00, 12500),
-('SN-1008', 5008, '2026-04-10', 300.00, 180);
+('SN-1008', 5008, '2026-04-10', 300.00, 180),
+('SN-1009', 5001, '2024-08-20', 400.00, 50),
+('SN-1010', 5002, '2025-03-10', 1.50, 4000),
+('SN-1011', 5003, '2025-08-01', 45.00, 90),
+('SN-1012', 5004, '2026-02-25', 5.00, 300),
+('SN-1013', 5005, '2024-11-10', 50.00, 600),
+('SN-1014', 5006, '2025-06-25', 200.00, 5),
+('SN-1015', 5007, '2025-11-15', 2.00, 6000);
 
--- 14. SHIPMENT
-INSERT INTO SHIPMENT (ShipmentID, ExpShippedDate, ActShippedDate, OriginalLocation, TrackingNum, ShippedDate, OrderID) VALUES
--- On time (Lead time ~1 month)
-(7001, '2024-05-11', '2024-05-11', 'China Port', 'TRK001', '2024-05-11', 5001), 
--- Delayed > 6 months (Q7)
-(7002, '2024-05-16', '2024-12-20', 'Suez Canal', 'TRK002', '2024-05-16', 5002), 
-(7003, '2024-06-21', '2024-06-25', 'Hamburg', 'TRK003', '2024-06-21', 5003),
-(7004, '2025-11-02', '2025-11-05', 'Vietnam', 'TRK004', '2025-11-02', 5004),
--- Delayed > 6 months (Q7)
-(7005, '2025-11-16', '2026-06-30', 'Panama', 'TRK005', '2025-11-16', 5005),
-(7006, '2025-12-06', '2025-12-10', 'Kyoto', 'TRK006', '2025-12-06', 5006),
-(7007, '2026-01-11', '2026-01-15', 'Mumbai', 'TRK007', '2026-01-11', 5007),
-(7008, '2026-01-21', '2026-01-25', 'Milan', 'TRK008', '2026-01-21', 5008);
+-- 14. SHIPMENT (15 Rows total: Mixed Late and Non-Late, ordered by ShipmentID)
+INSERT INTO SHIPMENT (ShipmentID, ExpShippedDate, ActShippedDate, OriginalLocation, TrackingNum, ActArrivalDate, OrderID) VALUES
+(7001, '2024-05-11', '2024-05-11', 'China Port', 'TRK001', '2024-05-25', 5001), -- 14 days (Non-late)
+(7002, '2024-05-16', '2024-06-10', 'Suez Canal', 'TRK002', '2024-07-20', 5002), -- 65 days late (Late)
+(7003, '2024-06-21', '2024-06-22', 'Hamburg', 'TRK003', '2024-07-10', 5003), -- 19 days (Non-late)
+(7004, '2025-11-02', '2025-11-03', 'Vietnam', 'TRK004', '2025-11-20', 5004), -- 18 days (Non-late)
+(7005, '2025-11-16', '2025-12-20', 'Panama', 'TRK005', '2026-01-25', 5005), -- 70 days late (Late)
+(7006, '2025-12-06', '2025-12-06', 'Kyoto', 'TRK006', '2025-12-15', 5006), -- 9 days (Non-late)
+(7007, '2026-01-11', '2026-02-15', 'Mumbai', 'TRK007', '2026-03-01', 5007), -- 49 days late (Late)
+(7008, '2026-01-21', '2026-01-21', 'Milan', 'TRK008', '2026-02-10', 5008), -- 20 days (Non-late)
+(7009, '2024-08-10', '2024-08-10', 'Singapore', 'TRK009', '2024-08-15', 5001), -- 5 days (Non-late)
+(7010, '2025-02-15', '2025-02-16', 'Tokyo', 'TRK010', '2025-03-05', 5002), -- 18 days (Non-late)
+(7011, '2025-07-01', '2025-07-02', 'Shanghai', 'TRK011', '2025-07-28', 5003), -- 27 days (Non-late)
+(7012, '2026-02-05', '2026-02-05', 'Dubai', 'TRK012', '2026-02-20', 5004), -- 15 days (Non-late)
+(7013, '2024-09-01', '2024-09-20', 'Los Angeles', 'TRK013', '2024-11-05', 5005), -- 65 days late (Late)
+(7014, '2025-04-10', '2025-05-15', 'London', 'TRK014', '2025-06-20', 5006), -- 71 days late (Late)
+(7015, '2025-08-20', '2025-10-01', 'Sydney', 'TRK015', '2025-11-10', 5007); -- 82 days late (Late)
 
--- 15. SHIPITEM
+
+-- 15. SHIPITEM (Putting the items inside the 15 shipments)
 INSERT INTO SHIPITEM (ItemSerial, ShipmentID, ShippedQty, ExpArrDate) VALUES
 ('SN-1001', 7001, 100, '2026-02-16'), ('SN-1002', 7002, 8000, '2026-02-13'),
 ('SN-1003', 7003, 180, '2026-03-05'), ('SN-1004', 7004, 600, '2026-03-20'),
 ('SN-1005', 7005, 1200, '2026-03-15'), ('SN-1006', 7006, 10, '2026-04-10'),
-('SN-1007', 7007, 12500, '2026-03-25'), ('SN-1008', 7008, 180, '2026-04-20');
+('SN-1007', 7007, 12500, '2026-03-25'), ('SN-1008', 7008, 180, '2026-04-20'),
+('SN-1009', 7009, 50, '2024-08-15'), ('SN-1010', 7010, 4000, '2025-03-05'),
+('SN-1011', 7011, 90, '2025-07-28'), ('SN-1012', 7012, 300, '2026-02-20'),
+('SN-1013', 7013, 600, '2024-11-05'), ('SN-1014', 7014, 5, '2025-06-20'),
+('SN-1015', 7015, 6000, '2025-11-10');
 
 -- 16. STAFF & EMPLOYEE & DRIVER
 INSERT INTO STAFF (StaffID, [Name], [Type], HireDate) VALUES
@@ -163,7 +181,7 @@ INSERT INTO STOP ([Sequence], RouteID, ActArrTime, EstArrTime) VALUES
 (1, 105, NULL, '2026-03-21 13:00:00'),
 (1, 106, NULL, '2026-03-22 08:00:00');
 
--- 18. DELIVERY
+-- 18. DELIVERY (Added deliveries for shipments 7009-7015)
 INSERT INTO DELIVERY ([Date], WarehouseID, VehicleID, ShipmentID, RouteID) VALUES
 ('2026-03-20', 1, 101, 7001, 101),
 ('2026-03-20', 2, 102, 7002, 102),
@@ -172,7 +190,14 @@ INSERT INTO DELIVERY ([Date], WarehouseID, VehicleID, ShipmentID, RouteID) VALUE
 ('2026-03-21', 5, 105, 7005, 105),
 ('2026-03-22', 6, 106, 7006, 106),
 ('2026-03-23', 7, 107, 7007, 107),
-('2026-03-24', 8, 108, 7008, 108);
+('2026-03-24', 8, 108, 7008, 108),
+('2024-08-15', 1, 101, 7009, 101),
+('2025-03-05', 2, 102, 7010, 102),
+('2025-07-28', 3, 103, 7011, 103),
+('2026-02-20', 4, 104, 7012, 104),
+('2024-11-05', 5, 101, 7013, 105),
+('2025-06-20', 6, 102, 7014, 106),
+('2025-11-10', 7, 103, 7015, 107);
 
 -- 19. SUPPLIER_HAS_PURCHASEORDER
 INSERT INTO SUPPLIER_HAS_PURCHASEORDER (OrderID, SupplierID) VALUES
@@ -180,15 +205,12 @@ INSERT INTO SUPPLIER_HAS_PURCHASEORDER (OrderID, SupplierID) VALUES
 
 -- 20. SHIPMENT_HAS_SUPPLIER
 INSERT INTO SHIPMENT_HAS_SUPPLIER (ShipmentID, SupplierID) VALUES
-(7001, 1), (7002, 1), (7003, 2), (7004, 2), (7005, 1), (7006, 4), (7007, 1), (7008, 1);
+(7001, 1), (7002, 1), (7003, 2), (7004, 2), (7005, 1), 
+(7006, 4), (7007, 1), (7008, 1), (7009, 5), (7010, 6), 
+(7011, 1), (7012, 3), (7013, 2), (7014, 8), (7015, 4);
 
 -- 21. SHIPMENT_TO_WAREHOUSE
 INSERT INTO SHIPMENT_TO_WAREHOUSE (ShipmentID, WarehouseID) VALUES
-(7001, 1), -- Singapore
-(7002, 1), -- Singapore
-(7003, 4), -- LA USA
-(7004, 4), -- LA USA
-(7005, 1), -- Singapore
-(7006, 7), -- Thailand
-(7007, 2), -- Singapore
-(7008, 3); -- Singapore
+(7001, 1), (7002, 1), (7003, 4), (7004, 4), (7005, 1), 
+(7006, 7), (7007, 2), (7008, 3), (7009, 1), (7010, 8), 
+(7011, 1), (7012, 6), (7013, 5), (7014, 6), (7015, 2);
