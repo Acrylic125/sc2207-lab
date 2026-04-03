@@ -95,11 +95,16 @@ INSERT INTO PURCHASEORDER (OrderID, OrderDate, [Status], [Value]) VALUES
 (5005, '2025-11-15', 'Fully Received', 90000.00),
 (5006, '2025-12-05', 'Fully Received', 120000.00),
 (5007, '2026-01-10', 'Submitted', 200000.00),
-(5008, '2026-01-20', 'Submitted', 300000.00);
+(5008, '2026-01-20', 'Submitted', 300000.00),
+--newly added
+(5009, '2025-11-20', 'Fully Received', 45000.00),
+(5010, '2025-11-25', 'Fully Received', 60000.00),
+(5011, '2026-01-28', 'Submitted', 150000.00);
 
 -- 11. CLIENT_HAS_PURCHASEORDER
 INSERT INTO CLIENT_HAS_PURCHASEORDER (ClientID, OrderID) VALUES
-(1, 5001), (2, 5002), (3, 5003), (4, 5004), (1, 5005), (6, 5006), (2, 5007), (8, 5008);
+(1, 5001), (2, 5002), (3, 5003), (4, 5004), (1, 5005), (6, 5006), (2, 5007), (8, 5008), 
+(3, 5009), (5, 5010), (7, 5011);
 
 -- 12. ITEM
 INSERT INTO ITEM (ItemSerial, ProductID) VALUES
@@ -176,7 +181,8 @@ INSERT INTO DELIVERY ([Date], WarehouseID, VehicleID, ShipmentID, RouteID) VALUE
 
 -- 19. SUPPLIER_HAS_PURCHASEORDER
 INSERT INTO SUPPLIER_HAS_PURCHASEORDER (OrderID, SupplierID) VALUES
-(5001, 1), (5002, 2), (5003, 3), (5004, 4), (5005, 5), (5006, 6), (5007, 2), (5008, 8);
+(5001, 1), (5002, 2), (5003, 3), (5004, 4), (5005, 5), (5006, 6), (5007, 2), (5008, 8),
+(5009, 3), (5010, 5), (5011, 7);
 
 -- 20. SHIPMENT_HAS_SUPPLIER
 INSERT INTO SHIPMENT_HAS_SUPPLIER (ShipmentID, SupplierID) VALUES
