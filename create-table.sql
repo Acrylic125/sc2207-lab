@@ -224,7 +224,7 @@ CREATE TABLE SHIPMENT (
     ActShippedDate   DATE,
     OriginalLocation VARCHAR(100),
     TrackingNum      VARCHAR(50),
-    ShippedDate      DATE,
+    ActArrivalDate     DATE,
     OrderID          INT,
     CONSTRAINT PK_SHIPMENT PRIMARY KEY (ShipmentID),
     CONSTRAINT FK_SHIPMENT_PO FOREIGN KEY (OrderID)
