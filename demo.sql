@@ -120,6 +120,32 @@ GROUP BY WarehouseID;
 -- WITH OrderDeliveryTime AS (SELECT PO.OrderID, PO.OrderDate, S.ActArrivalDate, STW.WarehouseID, DATEDIFF(month, PO.OrderDate, S.ActArrivalDate) AS DeliveryTimeMonths FROM PURCHASEORDER PO INNER JOIN SHIPMENT S ON S.OrderID = PO.OrderID INNER JOIN SHIPMENT_TO_WAREHOUSE STW ON S.ShipmentID = STW.ShipmentID) SELECT WarehouseID, AVG(CAST(DeliveryTimeMonths AS FLOAT)) AS AvgDeliveryTimeMonths FROM OrderDeliveryTime GROUP BY WarehouseID;
 
 -- Task 5
+-- Which suppliers only supply products to warehouses in Singapore?
+
+SELECT S.SupplierID,
+       S.[Name] AS SupplierName
+FROM SUPPLIER AS S
+WHERE EXISTS (
+    SELECT 1
+    FROM SHIPMENT_HAS_SUPPLIER AS SHS
+    INNER JOIN SHIPMENT_TO_WAREHOUSE AS STW
+        ON STW.ShipmentID = SHS.ShipmentID
+    INNER JOIN WAREHOUSE AS W
+        ON W.WarehouseID = STW.WarehouseID
+    WHERE SHS.SupplierID = S.SupplierID
+      AND W.[Address] LIKE '%Singapore%'
+)
+AND NOT EXISTS (
+    SELECT 1
+    FROM SHIPMENT_HAS_SUPPLIER AS SHS
+    INNER JOIN SHIPMENT_TO_WAREHOUSE AS STW
+        ON STW.ShipmentID = SHS.ShipmentID
+    INNER JOIN WAREHOUSE AS W
+        ON W.WarehouseID = STW.WarehouseID
+    WHERE SHS.SupplierID = S.SupplierID
+      AND W.[Address] NOT LIKE '%Singapore%'
+)
+ORDER BY S.SupplierID;
 
 -- Task 6
 -- Which suppliers do not supply any product to warehouses in Thailand
