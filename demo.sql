@@ -118,3 +118,42 @@ SELECT WarehouseID,
 FROM OrderDeliveryTime
 GROUP BY WarehouseID;
 -- WITH OrderDeliveryTime AS (SELECT PO.OrderID, PO.OrderDate, S.ActArrivalDate, STW.WarehouseID, DATEDIFF(month, PO.OrderDate, S.ActArrivalDate) AS DeliveryTimeMonths FROM PURCHASEORDER PO INNER JOIN SHIPMENT S ON S.OrderID = PO.OrderID INNER JOIN SHIPMENT_TO_WAREHOUSE STW ON S.ShipmentID = STW.ShipmentID) SELECT WarehouseID, AVG(CAST(DeliveryTimeMonths AS FLOAT)) AS AvgDeliveryTimeMonths FROM OrderDeliveryTime GROUP BY WarehouseID;
+
+-- Task 5
+
+-- Task 6
+-- Which suppliers do not supply any product to warehouses in Thailand
+-- but have supplied all the products in warehouses in Singapore?
+
+SELECT S.SupplierID, S.[Name]
+FROM SUPPLIER S
+WHERE S.SupplierID NOT IN (
+    -- Suppliers who have supplied to Thailand warehouses
+    SELECT SHS.SupplierID
+    FROM SHIPMENT_HAS_SUPPLIER SHS
+    INNER JOIN SHIPMENT SH ON SH.ShipmentID = SHS.ShipmentID
+    INNER JOIN SHIPMENT_TO_WAREHOUSE STW ON STW.ShipmentID = SH.ShipmentID
+    INNER JOIN WAREHOUSE W ON W.WarehouseID = STW.WarehouseID
+    WHERE W.[Address] LIKE '%Thailand%'
+)
+AND (
+    -- Count of distinct products this supplier sent to SG warehouses
+    SELECT COUNT(DISTINCT I.ProductID)
+    FROM SHIPMENT_HAS_SUPPLIER SHS
+    INNER JOIN SHIPMENT SH ON SH.ShipmentID = SHS.ShipmentID
+    INNER JOIN SHIPMENT_TO_WAREHOUSE STW ON STW.ShipmentID = SH.ShipmentID
+    INNER JOIN WAREHOUSE W ON W.WarehouseID = STW.WarehouseID
+    INNER JOIN SHIPITEM SI ON SI.ShipmentID = SH.ShipmentID
+    INNER JOIN ITEM I ON I.ItemSerial = SI.ItemSerial
+    WHERE W.[Address] LIKE '%Singapore%'
+    AND SHS.SupplierID = S.SupplierID
+) = (
+    -- Total distinct products across ALL SG warehouses
+    SELECT COUNT(DISTINCT I.ProductID)
+    FROM SHIPMENT SH
+    INNER JOIN SHIPMENT_TO_WAREHOUSE STW ON STW.ShipmentID = SH.ShipmentID
+    INNER JOIN WAREHOUSE W ON W.WarehouseID = STW.WarehouseID
+    INNER JOIN SHIPITEM SI ON SI.ShipmentID = SH.ShipmentID
+    INNER JOIN ITEM I ON I.ItemSerial = SI.ItemSerial
+    WHERE W.[Address] LIKE '%Singapore%'
+);
