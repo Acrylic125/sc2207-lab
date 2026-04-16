@@ -1,268 +1,249 @@
 -- ZONE
 CREATE TABLE ZONE (
-    WarehouseID     INT          NOT NULL,
-    ZoneType        VARCHAR(50)  NOT NULL,
+    WarehouseID INT NOT NULL,
+    ZoneType VARCHAR(50) NOT NULL,
     CONSTRAINT PK_ZONE PRIMARY KEY (WarehouseID, ZoneType)
 );
-
 -- LOCATION
 CREATE TABLE LOCATION (
-    LocationCode    VARCHAR(50) NOT NULL,
-    WarehouseID     INT         NOT NULL,
-    ZoneType        VARCHAR(50) NOT NULL,
+    LocationCode VARCHAR(50) NOT NULL,
+    WarehouseID INT NOT NULL,
+    ZoneType VARCHAR(50) NOT NULL,
     CONSTRAINT PK_LOCATION PRIMARY KEY (LocationCode, WarehouseID, ZoneType),
-    CONSTRAINT FK_LOCATION_ZONE FOREIGN KEY (WarehouseID, ZoneType)
-        REFERENCES ZONE(WarehouseID, ZoneType)
+    CONSTRAINT FK_LOCATION_ZONE FOREIGN KEY (WarehouseID, ZoneType) REFERENCES ZONE(WarehouseID, ZoneType)
 );
-
 -- WAREHOUSE
 CREATE TABLE WAREHOUSE (
-    WarehouseID  INT            NOT NULL,
-    [Address]    VARCHAR(255)   NOT NULL,
-    [Size]       VARCHAR(50)    NOT NULL,
-    Temperature  VARCHAR(50)    NOT NULL,
-    Security     VARCHAR(50)    NOT NULL,
+    WarehouseID INT NOT NULL,
+    [Address] VARCHAR(255) NOT NULL,
+    [Size] VARCHAR(50) NOT NULL,
+    Temperature VARCHAR(50) NOT NULL,
+    Security VARCHAR(50) NOT NULL,
     CONSTRAINT PK_WAREHOUSE PRIMARY KEY (WarehouseID)
 );
-
 -- INVENTORY
 CREATE TABLE INVENTORY (
-    InventorySerial INT         NOT NULL,
-    WarehouseID     INT         NOT NULL,
-    ProductID       INT         NOT NULL,
-    ClientID        INT         NOT NULL,
-    RQty            INT         NOT NULL,
-    HQty            INT         NOT NULL,
-    SQty            INT         NOT NULL,
-    OQty            INT         NOT NULL,
-    [Location]      VARCHAR(50) NOT NULL,
-    CONSTRAINT PK_INVENTORY PRIMARY KEY (InventorySerial, WarehouseID, ProductID, ClientID),
-    CONSTRAINT FK_INVENTORY_WAREHOUSE FOREIGN KEY (WarehouseID)
-        REFERENCES WAREHOUSE(WarehouseID)
+    InventorySerial INT NOT NULL,
+    WarehouseID INT NOT NULL,
+    ProductID INT NOT NULL,
+    ClientID INT NOT NULL,
+    RQty INT NOT NULL,
+    HQty INT NOT NULL,
+    SQty INT NOT NULL,
+    OQty INT NOT NULL,
+    [Location] VARCHAR(50) NOT NULL,
+    CONSTRAINT PK_INVENTORY PRIMARY KEY (
+        InventorySerial,
+        WarehouseID,
+        ProductID,
+        ClientID
+    ),
+    CONSTRAINT FK_INVENTORY_WAREHOUSE FOREIGN KEY (WarehouseID) REFERENCES WAREHOUSE(WarehouseID)
 );
-
 -- INVENTORY_LOG
 CREATE TABLE INVENTORY_LOG (
-    InventorySerial INT         NOT NULL,
-    WarehouseID     INT         NOT NULL,
-    ProductID       INT         NOT NULL,
-    ClientID        INT         NOT NULL,
-    [Timestamp]     DATETIME2   NOT NULL,
-    Movement        VARCHAR(50) NOT NULL,
-    Reason          VARCHAR(255),
-    CONSTRAINT PK_INVENTORY_LOG PRIMARY KEY (InventorySerial, WarehouseID, ProductID, ClientID, [Timestamp]),
-    CONSTRAINT FK_INVENTORY_LOG_INV FOREIGN KEY (InventorySerial, WarehouseID, ProductID, ClientID)
-        REFERENCES INVENTORY(InventorySerial, WarehouseID, ProductID, ClientID)
+    InventorySerial INT NOT NULL,
+    WarehouseID INT NOT NULL,
+    ProductID INT NOT NULL,
+    ClientID INT NOT NULL,
+    [Timestamp] DATETIME2 NOT NULL,
+    Movement VARCHAR(50) NOT NULL,
+    Reason VARCHAR(255),
+    CONSTRAINT PK_INVENTORY_LOG PRIMARY KEY (
+        InventorySerial,
+        WarehouseID,
+        ProductID,
+        ClientID,
+        [Timestamp]
+    ),
+    CONSTRAINT FK_INVENTORY_LOG_INV FOREIGN KEY (
+        InventorySerial,
+        WarehouseID,
+        ProductID,
+        ClientID
+    ) REFERENCES INVENTORY(
+        InventorySerial,
+        WarehouseID,
+        ProductID,
+        ClientID
+    )
 );
-
 -- DELIVERY
 CREATE TABLE DELIVERY (
-    [Date]      DATE        NOT NULL,
-    WarehouseID INT         NOT NULL,
-    VehicleID   INT         NOT NULL,
-    ShipmentID  INT         NOT NULL,
-    RouteID     INT         NOT NULL,
-    CONSTRAINT PK_DELIVERY PRIMARY KEY ([Date], WarehouseID, VehicleID, ShipmentID, RouteID),
-    CONSTRAINT FK_DELIVERY_WAREHOUSE FOREIGN KEY (WarehouseID)
-        REFERENCES WAREHOUSE(WarehouseID)
+    [Date] DATE NOT NULL,
+    WarehouseID INT NOT NULL,
+    VehicleID INT NOT NULL,
+    ShipmentID INT NOT NULL,
+    RouteID INT NOT NULL,
+    CONSTRAINT PK_DELIVERY PRIMARY KEY (
+        [Date],
+        WarehouseID,
+        VehicleID,
+        ShipmentID,
+        RouteID
+    ),
+    CONSTRAINT FK_DELIVERY_WAREHOUSE FOREIGN KEY (WarehouseID) REFERENCES WAREHOUSE(WarehouseID)
 );
-
 -- CLIENT
 CREATE TABLE CLIENT (
-    ClientID       INT          NOT NULL,
-    ServiceTier    VARCHAR(50)  NOT NULL,
-    CompanyName    VARCHAR(100) NOT NULL,
-    StartDate      DATE         NOT NULL,
-    ContactPerson  VARCHAR(100),
+    ClientID INT NOT NULL,
+    ServiceTier VARCHAR(50) NOT NULL,
+    CompanyName VARCHAR(100) NOT NULL,
+    StartDate DATE NOT NULL,
+    ContactPerson VARCHAR(100),
     CONSTRAINT PK_CLIENT PRIMARY KEY (ClientID)
 );
-
 -- CLIENT_HAS_PURCHASEORDER
 CREATE TABLE CLIENT_HAS_PURCHASEORDER (
     ClientID INT NOT NULL,
-    OrderID  INT NOT NULL,
+    OrderID INT NOT NULL,
     CONSTRAINT PK_CLIENT_HAS_PO PRIMARY KEY (ClientID, OrderID),
-    CONSTRAINT FK_CLIENT_HAS_PO_CLIENT FOREIGN KEY (ClientID)
-        REFERENCES CLIENT(ClientID)
+    CONSTRAINT FK_CLIENT_HAS_PO_CLIENT FOREIGN KEY (ClientID) REFERENCES CLIENT(ClientID)
 );
-
 -- PURCHASEORDER
 CREATE TABLE PURCHASEORDER (
-    OrderID   INT          NOT NULL,
-    OrderDate DATE         NOT NULL,
-    [Status]  VARCHAR(50)  NOT NULL,
-    [Value]   DECIMAL(18,2) NOT NULL,
+    OrderID INT NOT NULL,
+    OrderDate DATE NOT NULL,
+    [Status] VARCHAR(50) NOT NULL,
+    [Value] DECIMAL(18, 2) NOT NULL,
     CONSTRAINT PK_PURCHASEORDER PRIMARY KEY (OrderID)
 );
-
 -- PRODUCT
 CREATE TABLE PRODUCT (
-    ProductID              INT          NOT NULL,
-    [Name]                 VARCHAR(100) NOT NULL,
-    Brand                  VARCHAR(50),
-    Cost                   DECIMAL(18,2),
-    Category               VARCHAR(50),
-    Price                  DECIMAL(18,2),
-    [Length]               DECIMAL(10,2),
-    Width                  DECIMAL(10,2),
-    Height                 DECIMAL(10,2),
-    HandlingRequirements   VARCHAR(255),
+    ProductID INT NOT NULL,
+    [Name] VARCHAR(100) NOT NULL,
+    Brand VARCHAR(50),
+    Cost DECIMAL(18, 2),
+    Category VARCHAR(50),
+    Price DECIMAL(18, 2),
+    [Length] DECIMAL(10, 2),
+    Width DECIMAL(10, 2),
+    Height DECIMAL(10, 2),
+    HandlingRequirements VARCHAR(255),
     CONSTRAINT PK_PRODUCT PRIMARY KEY (ProductID)
 );
-
 -- SUPPLY
 CREATE TABLE SUPPLY (
-    [Period]    VARCHAR(20) NOT NULL,
-    ProductID   INT         NOT NULL,
-    ClientID    INT         NOT NULL,
-    SupplierID  INT         NOT NULL,
-    LeadTime    INT         NOT NULL,
+    [Period] VARCHAR(20) NOT NULL,
+    ProductID INT NOT NULL,
+    ClientID INT NOT NULL,
+    SupplierID INT NOT NULL,
+    LeadTime INT NOT NULL,
     CONSTRAINT PK_SUPPLY PRIMARY KEY ([Period], ProductID, ClientID, SupplierID),
-    CONSTRAINT FK_SUPPLY_PRODUCT  FOREIGN KEY (ProductID)  REFERENCES PRODUCT(ProductID),
-    CONSTRAINT FK_SUPPLY_CLIENT   FOREIGN KEY (ClientID)   REFERENCES CLIENT(ClientID)
+    CONSTRAINT FK_SUPPLY_PRODUCT FOREIGN KEY (ProductID) REFERENCES PRODUCT(ProductID),
+    CONSTRAINT FK_SUPPLY_CLIENT FOREIGN KEY (ClientID) REFERENCES CLIENT(ClientID)
 );
-
 -- SUPPLIER
 CREATE TABLE SUPPLIER (
-    SupplierID     INT          NOT NULL,
-    Country        VARCHAR(50),
-    [Name]         VARCHAR(100) NOT NULL,
-    PaymentTerms   VARCHAR(50),
+    SupplierID INT NOT NULL,
+    Country VARCHAR(50),
+    [Name] VARCHAR(100) NOT NULL,
+    PaymentTerms VARCHAR(50),
     CONSTRAINT PK_SUPPLIER PRIMARY KEY (SupplierID)
 );
-
 -- STOP
 CREATE TABLE STOP (
-    [Sequence]   INT          NOT NULL,
-    RouteID      INT          NOT NULL,
-    ActArrTime   DATETIME2,
-    EstArrTime   DATETIME2,
+    [Sequence] INT NOT NULL,
+    RouteID INT NOT NULL,
+    ActArrTime DATETIME2,
+    EstArrTime DATETIME2,
     CONSTRAINT PK_STOP PRIMARY KEY ([Sequence], RouteID)
 );
-
 -- ITEM
 CREATE TABLE ITEM (
-    ItemSerial  VARCHAR(50) NOT NULL,
-    ProductID   INT         NOT NULL,
+    ItemSerial VARCHAR(50) NOT NULL,
+    ProductID INT NOT NULL,
     CONSTRAINT PK_ITEM PRIMARY KEY (ItemSerial),
-    CONSTRAINT FK_ITEM_PRODUCT FOREIGN KEY (ProductID)
-        REFERENCES PRODUCT(ProductID)
+    CONSTRAINT FK_ITEM_PRODUCT FOREIGN KEY (ProductID) REFERENCES PRODUCT(ProductID)
 );
-
 -- ORDERITEM
 CREATE TABLE ORDERITEM (
-    ItemSerial  VARCHAR(50) NOT NULL,
-    OrderID     INT         ,
-    ExpDelDate  DATE        ,
-    UnitPrice   DECIMAL(18,2) NOT NULL,
-    OrderedQty  INT         NOT NULL,
+    ItemSerial VARCHAR(50) NOT NULL,
+    OrderID INT,
+    ExpDelDate DATE,
+    UnitPrice DECIMAL(18, 2) NOT NULL,
+    OrderedQty INT NOT NULL,
     CONSTRAINT PK_ORDERITEM PRIMARY KEY (ItemSerial, OrderID),
-    CONSTRAINT FK_ORDERITEM_ITEM FOREIGN KEY (ItemSerial)
-        REFERENCES ITEM(ItemSerial),
-    CONSTRAINT FK_ORDERITEM_PO FOREIGN KEY (OrderID)
-        REFERENCES PURCHASEORDER(OrderID)
+    CONSTRAINT FK_ORDERITEM_ITEM FOREIGN KEY (ItemSerial) REFERENCES ITEM(ItemSerial),
+    CONSTRAINT FK_ORDERITEM_PO FOREIGN KEY (OrderID) REFERENCES PURCHASEORDER(OrderID)
 );
-
 -- SUPPLIER_HAS_PURCHASEORDER
 CREATE TABLE SUPPLIER_HAS_PURCHASEORDER (
-    OrderID    INT NOT NULL,
+    OrderID INT NOT NULL,
     SupplierID INT NOT NULL,
     CONSTRAINT PK_SUPPLIER_HAS_PO PRIMARY KEY (OrderID, SupplierID),
-    CONSTRAINT FK_SUPPLIER_HAS_PO_SUPPLIER FOREIGN KEY (SupplierID)
-        REFERENCES SUPPLIER(SupplierID),
-    CONSTRAINT FK_SUPPLIER_HAS_PO_PO FOREIGN KEY (OrderID)
-        REFERENCES PURCHASEORDER(OrderID)
+    CONSTRAINT FK_SUPPLIER_HAS_PO_SUPPLIER FOREIGN KEY (SupplierID) REFERENCES SUPPLIER(SupplierID),
+    CONSTRAINT FK_SUPPLIER_HAS_PO_PO FOREIGN KEY (OrderID) REFERENCES PURCHASEORDER(OrderID)
 );
-
 -- SHIPITEM
 CREATE TABLE SHIPITEM (
-    ItemSerial   VARCHAR(50) NOT NULL,
-    ShipmentID   INT         NOT NULL,
-    ShippedQty   INT         NOT NULL,
-    
+    ItemSerial VARCHAR(50) NOT NULL,
+    ShipmentID INT NOT NULL,
+    ShippedQty INT NOT NULL,
+    ExpArrDate DATE NOT NULL,
     CONSTRAINT PK_SHIPITEM PRIMARY KEY (ItemSerial, ShipmentID),
-    CONSTRAINT FK_SHIPITEM_ITEM FOREIGN KEY (ItemSerial)
-        REFERENCES ITEM(ItemSerial)
+    CONSTRAINT FK_SHIPITEM_ITEM FOREIGN KEY (ItemSerial) REFERENCES ITEM(ItemSerial)
 );
-
 -- STAFF
 CREATE TABLE STAFF (
-    StaffID   INT          NOT NULL,
-    [Name]    VARCHAR(100) NOT NULL,
-    [Type]    VARCHAR(50)  NOT NULL,
-    HireDate  DATE         NOT NULL,
+    StaffID INT NOT NULL,
+    [Name] VARCHAR(100) NOT NULL,
+    [Type] VARCHAR(50) NOT NULL,
+    HireDate DATE NOT NULL,
     CONSTRAINT PK_STAFF PRIMARY KEY (StaffID)
 );
-
 -- EMPLOYEE
 CREATE TABLE EMPLOYEE (
-    StaffID       INT          NOT NULL,
+    StaffID INT NOT NULL,
     Certification VARCHAR(50),
-    WarehouseID   INT          NOT NULL,
+    WarehouseID INT NOT NULL,
     CONSTRAINT PK_EMPLOYEE PRIMARY KEY (StaffID),
-    CONSTRAINT FK_EMPLOYEE_STAFF FOREIGN KEY (StaffID)
-        REFERENCES STAFF(StaffID),
-    CONSTRAINT FK_EMPLOYEE_WAREHOUSE FOREIGN KEY (WarehouseID)
-        REFERENCES WAREHOUSE(WarehouseID)
+    CONSTRAINT FK_EMPLOYEE_STAFF FOREIGN KEY (StaffID) REFERENCES STAFF(StaffID),
+    CONSTRAINT FK_EMPLOYEE_WAREHOUSE FOREIGN KEY (WarehouseID) REFERENCES WAREHOUSE(WarehouseID)
 );
-
 -- DRIVER
 CREATE TABLE DRIVER (
-    StaffID           INT          NOT NULL,
-    LicenseNumber     VARCHAR(50)  NOT NULL,
-    LicenseExpiration DATE         NOT NULL,
-    VehicleID         INT,
+    StaffID INT NOT NULL,
+    LicenseNumber VARCHAR(50) NOT NULL,
+    LicenseExpiration DATE NOT NULL,
+    VehicleID INT,
     CONSTRAINT PK_DRIVER PRIMARY KEY (StaffID),
-    CONSTRAINT FK_DRIVER_STAFF FOREIGN KEY (StaffID)
-        REFERENCES STAFF(StaffID)
+    CONSTRAINT FK_DRIVER_STAFF FOREIGN KEY (StaffID) REFERENCES STAFF(StaffID)
 );
-
 -- SHIPMENT
 CREATE TABLE SHIPMENT (
-    ShipmentID       INT          NOT NULL,
-    OrderID          INT,
-
-    ExpectedDispatchDate  DATE,
-    ActualDispatchDate    DATE,
-    
-    ExpectedArrivalDate   DATE,
-    ActualArrivalDate     DATE,
-
+    ShipmentID INT NOT NULL,
+    OrderID INT,
+    ExpectedDispatchDate DATE,
+    ActualDispatchDate DATE,
+    ExpectedArrivalDate DATE,
+    ActualArrivalDate DATE,
     OriginalLocation VARCHAR(100),
-    TrackingNum      VARCHAR(50),
-    
+    TrackingNum VARCHAR(50),
     CONSTRAINT PK_SHIPMENT PRIMARY KEY (ShipmentID),
-    CONSTRAINT FK_SHIPMENT_PO FOREIGN KEY (OrderID)
-        REFERENCES PURCHASEORDER(OrderID)
+    CONSTRAINT FK_SHIPMENT_PO FOREIGN KEY (OrderID) REFERENCES PURCHASEORDER(OrderID)
 );
-
 -- SHIPMENT_HAS_SUPPLIER
 CREATE TABLE SHIPMENT_HAS_SUPPLIER (
     ShipmentID INT NOT NULL,
     SupplierID INT NOT NULL,
     CONSTRAINT PK_SHIPMENT_HAS_SUPPLIER PRIMARY KEY (ShipmentID, SupplierID),
-    CONSTRAINT FK_SHIPMENT_HAS_SUP_SHIPMENT FOREIGN KEY (ShipmentID)
-        REFERENCES SHIPMENT(ShipmentID),
-    CONSTRAINT FK_SHIPMENT_HAS_SUP_SUPPLIER FOREIGN KEY (SupplierID)
-        REFERENCES SUPPLIER(SupplierID)
+    CONSTRAINT FK_SHIPMENT_HAS_SUP_SHIPMENT FOREIGN KEY (ShipmentID) REFERENCES SHIPMENT(ShipmentID),
+    CONSTRAINT FK_SHIPMENT_HAS_SUP_SUPPLIER FOREIGN KEY (SupplierID) REFERENCES SUPPLIER(SupplierID)
 );
-
 -- SHIPMENT_TO_WAREHOUSE
 CREATE TABLE SHIPMENT_TO_WAREHOUSE (
-    ShipmentID  INT NOT NULL,
+    ShipmentID INT NOT NULL,
     WarehouseID INT NOT NULL,
     CONSTRAINT PK_SHIPMENT_TO_WH PRIMARY KEY (ShipmentID, WarehouseID),
-    CONSTRAINT FK_SHIPMENT_TO_WH_SHIPMENT FOREIGN KEY (ShipmentID)
-        REFERENCES SHIPMENT(ShipmentID),
-    CONSTRAINT FK_SHIPMENT_TO_WH_WAREHOUSE FOREIGN KEY (WarehouseID)
-        REFERENCES WAREHOUSE(WarehouseID)
+    CONSTRAINT FK_SHIPMENT_TO_WH_SHIPMENT FOREIGN KEY (ShipmentID) REFERENCES SHIPMENT(ShipmentID),
+    CONSTRAINT FK_SHIPMENT_TO_WH_WAREHOUSE FOREIGN KEY (WarehouseID) REFERENCES WAREHOUSE(WarehouseID)
 );
-
 -- VehicleMaintenance
 CREATE TABLE VEHICLE_MAINTENANCE (
-    VehicleID      INT           NOT NULL,
-    ServiceID      INT           NOT NULL,
-    ServiceDateTime DATETIME2    NOT NULL,
-    ServiceCost    DECIMAL(18,2) NOT NULL,
+    VehicleID INT NOT NULL,
+    ServiceID INT NOT NULL,
+    ServiceDateTime DATETIME2 NOT NULL,
+    ServiceCost DECIMAL(18, 2) NOT NULL,
     CONSTRAINT PK_VEHICLE_MAINTENANCE PRIMARY KEY (VehicleID, ServiceID)
 );

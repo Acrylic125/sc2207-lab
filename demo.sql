@@ -101,27 +101,29 @@ ORDER BY NumberOfPurchaseOrders DESC;
 -- What is the average length of time (in terms of months) it takes for products ordered until the products
 -- are delivered to warehouses?
 -- Across ALL warehouses.
-SELECT AVG(DATEDIFF(month, PO.OrderDate, S.ActArrivalDate))
+SELECT AVG(
+        DATEDIFF(month, PO.OrderDate, S.ActualArrivalDate)
+    )
 FROM PURCHASEORDER PO,
     SHIPMENT S
 WHERE PO.OrderID = S.OrderID;
--- SELECT AVG(DATEDIFF(month, PO.OrderDate, S.ActArrivalDate) * 1.0) FROM PURCHASEORDER PO, SHIPMENT S WHERE PO.OrderID = S.OrderID;
+-- SELECT AVG(DATEDIFF(month, PO.OrderDate, S.ActualArrivalDate) * 1.0) FROM PURCHASEORDER PO, SHIPMENT S WHERE PO.OrderID = S.OrderID;
 -- Indiviudal warehouses.
 WITH OrderDeliveryTime AS (
     SELECT PO.OrderID,
         PO.OrderDate,
-        S.ActArrivalDate,
+        S.ActualArrivalDate,
         STW.WarehouseID,
-        DATEDIFF(month, PO.OrderDate, S.ActArrivalDate) AS DeliveryTimeMonths
+        DATEDIFF(month, PO.OrderDate, S.ActualArrivalDate) AS DeliveryTimeMonths
     FROM PURCHASEORDER PO
-        INNER JOIN SHIPMENT S ON S.OrderID = PO.OrderID -- Added the missing join to SHIPMENT_TO_WAREHOUSE to get WarehouseID
+        INNER JOIN SHIPMENT S ON S.OrderID = PO.OrderID
         INNER JOIN SHIPMENT_TO_WAREHOUSE STW ON S.ShipmentID = STW.ShipmentID
 )
 SELECT WarehouseID,
     AVG(CAST(DeliveryTimeMonths AS FLOAT)) AS AvgDeliveryTimeMonths
 FROM OrderDeliveryTime
 GROUP BY WarehouseID;
--- WITH OrderDeliveryTime AS (SELECT PO.OrderID, PO.OrderDate, S.ActArrivalDate, STW.WarehouseID, DATEDIFF(month, PO.OrderDate, S.ActArrivalDate) AS DeliveryTimeMonths FROM PURCHASEORDER PO INNER JOIN SHIPMENT S ON S.OrderID = PO.OrderID INNER JOIN SHIPMENT_TO_WAREHOUSE STW ON S.ShipmentID = STW.ShipmentID) SELECT WarehouseID, AVG(CAST(DeliveryTimeMonths AS FLOAT)) AS AvgDeliveryTimeMonths FROM OrderDeliveryTime GROUP BY WarehouseID;
+-- WITH OrderDeliveryTime AS (SELECT PO.OrderID, PO.OrderDate, S.ActualArrivalDate, STW.WarehouseID, DATEDIFF(month, PO.OrderDate, S.ActualArrivalDate) AS DeliveryTimeMonths FROM PURCHASEORDER PO INNER JOIN SHIPMENT S ON S.OrderID = PO.OrderID INNER JOIN SHIPMENT_TO_WAREHOUSE STW ON S.ShipmentID = STW.ShipmentID) SELECT WarehouseID, AVG(CAST(DeliveryTimeMonths AS FLOAT)) AS AvgDeliveryTimeMonths FROM OrderDeliveryTime GROUP BY WarehouseID;
 -- Task 5
 -- Which suppliers only supply products to warehouses in Singapore?
 SELECT S.SupplierID,
@@ -183,19 +185,21 @@ WHERE S.SupplierID NOT IN (
     );
 -- SELECT S.SupplierID,S.Name FROM SUPPLIER S WHERE S.SupplierID NOT IN(SELECT SHS.SupplierID FROM SHIPMENT_HAS_SUPPLIER SHS JOIN SHIPMENT SH ON SH.ShipmentID=SHS.ShipmentID JOIN SHIPMENT_TO_WAREHOUSE STW ON STW.ShipmentID=SH.ShipmentID JOIN WAREHOUSE W ON W.WarehouseID=STW.WarehouseID WHERE W.Address LIKE '%Thailand%')AND(SELECT COUNT(DISTINCT I.ProductID)FROM SHIPMENT_HAS_SUPPLIER SHS JOIN SHIPMENT SH ON SH.ShipmentID=SHS.ShipmentID JOIN SHIPMENT_TO_WAREHOUSE STW ON STW.ShipmentID=SH.ShipmentID JOIN WAREHOUSE W ON W.WarehouseID=STW.WarehouseID JOIN SHIPITEM SI ON SI.ShipmentID=SH.ShipmentID JOIN ITEM I ON I.ItemSerial=SI.ItemSerial WHERE W.Address LIKE '%Singapore%'AND SHS.SupplierID=S.SupplierID)=(SELECT COUNT(DISTINCT I.ProductID)FROM SHIPMENT SH JOIN SHIPMENT_TO_WAREHOUSE STW ON STW.ShipmentID=SH.ShipmentID JOIN WAREHOUSE W ON W.WarehouseID=STW.WarehouseID JOIN SHIPITEM SI ON SI.ShipmentID=SH.ShipmentID JOIN ITEM I ON I.ItemSerial=SI.ItemSerial WHERE W.Address LIKE '%Singapore%');
 -- Task 7
+-- Which are the locations where shipment depart from that have experienced the most delays (actual
+-- arrival date is more than 6 months after expected arrival date)
 WITH Timings AS (
     SELECT S.ShipmentID,
-        S.ExpShippedDate,
-        S.ActShippedDate,
+        S.ExpectedArrivalDate,
+        S.ActualArrivalDate,
         S.OriginalLocation
     FROM SHIPMENT S
-    WHERE S.ActArrivalDate IS NOT NULL
+    WHERE S.ActualArrivalDate IS NOT NULL
 ),
 DelayCount AS (
     SELECT T.OriginalLocation,
         Count(*) AS Delays
     FROM Timings T
-    WHERE T.ActShippedDate > DATEADD(month, 6, T.ExpShippedDate)
+    WHERE T.ActualArrivalDate > DATEADD(month, 6, T.ExpectedArrivalDate)
     GROUP BY T.OriginalLocation
 )
 SELECT D.OriginalLocation
@@ -204,3 +208,4 @@ WHERE D.Delays = (
         SELECT MAX(Delays)
         FROM DelayCount
     );
+-- WITH T AS(SELECT S.ShipmentID,S.ExpectedArrivalDate,S.ActualArrivalDate,S.OriginalLocation FROM SHIPMENT S WHERE S.ActualArrivalDate IS NOT NULL),DC AS(SELECT T.OriginalLocation,COUNT(*)Delays FROM T WHERE T.ActualArrivalDate>DATEADD(month,6,T.ExpectedArrivalDate)GROUP BY T.OriginalLocation)SELECT D.OriginalLocation FROM DC D WHERE D.Delays=(SELECT MAX(Delays)FROM DC);
