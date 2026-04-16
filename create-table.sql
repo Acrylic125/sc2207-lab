@@ -152,8 +152,8 @@ CREATE TABLE ITEM (
 -- ORDERITEM
 CREATE TABLE ORDERITEM (
     ItemSerial  VARCHAR(50) NOT NULL,
-    OrderID     INT         NOT NULL,
-    ExpDelDate  DATE        NOT NULL,
+    OrderID     INT         ,
+    ExpDelDate  DATE        ,
     UnitPrice   DECIMAL(18,2) NOT NULL,
     OrderedQty  INT         NOT NULL,
     CONSTRAINT PK_ORDERITEM PRIMARY KEY (ItemSerial, OrderID),
@@ -179,7 +179,7 @@ CREATE TABLE SHIPITEM (
     ItemSerial   VARCHAR(50) NOT NULL,
     ShipmentID   INT         NOT NULL,
     ShippedQty   INT         NOT NULL,
-    ExpArrDate   DATE        NOT NULL,
+    
     CONSTRAINT PK_SHIPITEM PRIMARY KEY (ItemSerial, ShipmentID),
     CONSTRAINT FK_SHIPITEM_ITEM FOREIGN KEY (ItemSerial)
         REFERENCES ITEM(ItemSerial)
@@ -220,12 +220,17 @@ CREATE TABLE DRIVER (
 -- SHIPMENT
 CREATE TABLE SHIPMENT (
     ShipmentID       INT          NOT NULL,
-    ExpShippedDate   DATE,
-    ActShippedDate   DATE,
+    OrderID          INT,
+
+    ExpectedDispatchDate  DATE,
+    ActualDispatchDate    DATE,
+    
+    ExpectedArrivalDate   DATE,
+    ActualArrivalDate     DATE,
+
     OriginalLocation VARCHAR(100),
     TrackingNum      VARCHAR(50),
-    ActArrivalDate     DATE,
-    OrderID          INT,
+    
     CONSTRAINT PK_SHIPMENT PRIMARY KEY (ShipmentID),
     CONSTRAINT FK_SHIPMENT_PO FOREIGN KEY (OrderID)
         REFERENCES PURCHASEORDER(OrderID)
