@@ -121,6 +121,10 @@ INSERT INTO SUPPLY ([Period], ProductID, ClientID, SupplierID, LeadTime) VALUES
 ('2026-Q1', 108, 8, 8, 45),
 ('2026-Q1', 103, 1, 1, 14),  
 ('2026-Q1', 102, 3, 3, 21); 
+--task 7 
+INSERT INTO SUPPLY ([Period], ProductID, ClientID, SupplierID, LeadTime) VALUES
+('2025-Q4', 102, 2, 2, 7);
+
 
 --- 10. PURCHASEORDER
 INSERT INTO PURCHASEORDER (OrderID, OrderDate, [Status], [Value]) VALUES
@@ -157,6 +161,11 @@ INSERT INTO PURCHASEORDER (OrderID, OrderDate, [Status], [Value]) VALUES
 (5029, '2024-02-18', 'Fully Received', 8000.00),
 (5030, '2024-03-01', 'Fully Received', 3000.00);
 
+--task 7
+INSERT INTO PURCHASEORDER (OrderID, OrderDate, [Status], [Value]) VALUES
+(5031, '2025-01-10', 'Fully Received', 42000.00),
+(5032, '2025-06-01', 'Fully Received', 48000.00),
+(5033, '2025-10-01', 'Fully Received', 30000.00);
 
 -- 11. CLIENT_HAS_PURCHASEORDER
 INSERT INTO CLIENT_HAS_PURCHASEORDER (ClientID, OrderID) VALUES
@@ -184,6 +193,9 @@ INSERT INTO CLIENT_HAS_PURCHASEORDER (ClientID, OrderID) VALUES
 (8, 5029),  
 (2, 5030);  
 
+--task 7
+
+(3, 5031), (1, 5032), (2, 5033);
 
 -- 12. ITEM (Added SN-1009 to SN-1015)
 INSERT INTO ITEM (ItemSerial, ProductID) VALUES
@@ -219,6 +231,11 @@ INSERT INTO ITEM (ItemSerial, ProductID) VALUES
 ('SN-1028', 102),
 ('SN-1029', 108),
 ('SN-1030', 107);  
+--task 7 
+INSERT INTO ITEM (ItemSerial, ProductID) VALUES
+('SN-1031', 103),
+('SN-1032', 101),
+('SN-1033', 102);
 
 -- 13. ORDERITEM (Mapping the new items to the orders)
 INSERT INTO ORDERITEM (ItemSerial, OrderID, ExpDelDate, UnitPrice, OrderedQty) VALUES
@@ -255,6 +272,12 @@ INSERT INTO ORDERITEM (ItemSerial, OrderID, ExpDelDate, UnitPrice, OrderedQty) V
 ('SN-1028', 5028, '2024-02-26',  50,  100),
 ('SN-1029', 5029, '2024-03-06', 160, 50),
 ('SN-1030', 5030, '2024-03-10',  15,  200);
+
+--task 7
+INSERT INTO ORDERITEM (ItemSerial, OrderID, ExpDelDate, UnitPrice, OrderedQty) VALUES
+('SN-1031', 5031, '2025-02-15', 120.00, 350),
+('SN-1032', 5032, '2025-06-25', 800.00,  60),
+('SN-1033', 5033, '2025-11-05',   3.00, 10000);
 
 
 -- 14. SHIPMENT 
@@ -294,6 +317,12 @@ INSERT INTO SHIPMENT (ShipmentID, OrderID, ExpectedDispatchDate, ActualDispatchD
 (7032, 5029, '2024-02-20', '2024-02-20', '2024-03-06', '2024-03-06', 'Shenzhen Port', 'TRK5029A'),
 (7033, 5030, '2024-03-04', '2024-03-04', '2024-03-10', '2024-03-10', 'Shenzhen Port', 'TRK5030A');
 
+--task 7
+INSERT INTO SHIPMENT (ShipmentID, OrderID, ExpectedDispatchDate, ActualDispatchDate, ExpectedArrivalDate, ActualArrivalDate, OriginalLocation, TrackingNum) VALUES
+(7034, 5031, '2025-01-22', '2025-01-24', '2025-02-15', '2025-10-20', 'Busan Terminal', 'TRK5031A'),
+(7035, 5032, '2025-06-03', '2025-06-05', '2025-06-25', '2026-03-10', 'Tokyo Port',     'TRK5032A'),
+(7036, 5033, '2025-10-17', '2025-10-19', '2025-11-05', '2026-09-01', 'Busan Terminal', 'TRK5033A');
+
 
 INSERT INTO SHIPITEM (ItemSerial, ShipmentID, ShippedQty) VALUES
 ('SN-1006', 7006, 200),   
@@ -327,6 +356,12 @@ INSERT INTO SHIPITEM (ItemSerial, ShipmentID, ShippedQty) VALUES
 ('SN-1028', 7031, 100),
 ('SN-1029', 7032,  50),
 ('SN-1030', 7033, 200);
+
+--task 7 
+INSERT INTO SHIPITEM (ItemSerial, ShipmentID, ShippedQty) VALUES
+('SN-1031', 7034, 350),
+('SN-1032', 7035,  60),
+('SN-1033', 7036, 10000);
 
 
 -- 16. STAFF & EMPLOYEE & DRIVER
@@ -390,6 +425,12 @@ INSERT INTO STOP ([Sequence], RouteID, ActArrTime, EstArrTime) VALUES
 (1, 227, '2024-03-06 10:00:00', '2024-03-06 10:00:00'),
 (1, 228, '2024-03-10 10:00:00', '2024-03-10 10:00:00');
 
+-- task 7 
+INSERT INTO STOP ([Sequence], RouteID, ActArrTime, EstArrTime) VALUES
+(1, 229, '2025-10-20 10:00:00', '2025-02-15 10:00:00'),
+(1, 230, '2026-03-10 10:00:00', '2025-06-25 10:00:00'),
+(1, 231, '2026-09-01 10:00:00', '2025-11-05 10:00:00');
+
 -- 18. DELIVERY (Added deliveries for shipments 7009-7015)
 INSERT INTO DELIVERY ([Date], WarehouseID, VehicleID, ShipmentID, RouteID) VALUES
 
@@ -425,6 +466,12 @@ INSERT INTO DELIVERY ([Date], WarehouseID, VehicleID, ShipmentID, RouteID) VALUE
 ('2024-03-06', 1, 102, 7032, 227),
 ('2024-03-10', 2, 103, 7033, 228);
 
+--task 7
+INSERT INTO DELIVERY ([Date], WarehouseID, VehicleID, ShipmentID, RouteID) VALUES
+('2025-10-20', 6, 103, 7034, 229),
+('2026-03-10', 1, 104, 7035, 230),
+('2026-09-01', 5, 101, 7036, 231);
+
 -- 19. SUPPLIER_HAS_PURCHASEORDER
 INSERT INTO SUPPLIER_HAS_PURCHASEORDER (OrderID, SupplierID) VALUES
 (5001, 1),   
@@ -451,6 +498,11 @@ INSERT INTO SUPPLIER_HAS_PURCHASEORDER (OrderID, SupplierID) VALUES
 (5028, 1),
 (5029, 1),
 (5030, 1);
+
+-- task 7
+INSERT INTO SUPPLIER_HAS_PURCHASEORDER (OrderID, SupplierID) VALUES
+(5031, 3), (5032, 1), (5033, 2);
+
 
 -- 20. SHIPMENT_HAS_SUPPLIER
 INSERT INTO SHIPMENT_HAS_SUPPLIER (ShipmentID, SupplierID) VALUES
@@ -489,6 +541,10 @@ INSERT INTO SHIPMENT_HAS_SUPPLIER (ShipmentID, SupplierID) VALUES
 (7032, 1),
 (7033, 1);
 
+--task 7 
+INSERT INTO SHIPMENT_HAS_SUPPLIER (ShipmentID, SupplierID) VALUES
+(7034, 3), (7035, 1), (7036, 2);
+
 -- 21. SHIPMENT_TO_WAREHOUSE
 INSERT INTO SHIPMENT_TO_WAREHOUSE (ShipmentID, WarehouseID) VALUES
 (7004, 1),   
@@ -524,3 +580,7 @@ INSERT INTO SHIPMENT_TO_WAREHOUSE (ShipmentID, WarehouseID) VALUES
 (7031, 1),
 (7032, 1),
 (7033, 2);
+
+--task 7 
+INSERT INTO SHIPMENT_TO_WAREHOUSE (ShipmentID, WarehouseID) VALUES
+(7034, 6), (7035, 1), (7036, 5);
