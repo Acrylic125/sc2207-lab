@@ -5,7 +5,7 @@ ENV SA_PASSWORD=YourStrong!Passw0rd
 
 # Copy SQL files
 COPY create-table.sql /scripts/create-table.sql
-COPY seed-table.sql /scripts/seed-table.sql
+COPY FINAL.sql /scripts/FINAL.sql
 COPY entrypoint.sh /entrypoint.sh
 
 # Give permission
