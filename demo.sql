@@ -130,6 +130,7 @@ SELECT S.SupplierID,
     S.[Name] AS SupplierName
 FROM SUPPLIER AS S
 WHERE EXISTS (
+        -- Suppliers who have supplied to SG warehouses
         SELECT 1
         FROM SHIPMENT_HAS_SUPPLIER AS SHS
             INNER JOIN SHIPMENT_TO_WAREHOUSE AS STW ON STW.ShipmentID = SHS.ShipmentID
@@ -138,6 +139,7 @@ WHERE EXISTS (
             AND W.[Address] LIKE '%Singapore%'
     )
     AND NOT EXISTS (
+        -- Suppliers who have not supplied to SG warehouses
         SELECT 1
         FROM SHIPMENT_HAS_SUPPLIER AS SHS
             INNER JOIN SHIPMENT_TO_WAREHOUSE AS STW ON STW.ShipmentID = SHS.ShipmentID
@@ -202,10 +204,11 @@ DelayCount AS (
     WHERE T.ActualArrivalDate > DATEADD(month, 6, T.ExpectedArrivalDate)
     GROUP BY T.OriginalLocation
 )
-SELECT D.OriginalLocation
+SELECT D.OriginalLocation,
+    D.Delays
 FROM DelayCount D
 WHERE D.Delays = (
-        SELECT MAX(Delays)
+        SELECT MAX(D.Delays)
         FROM DelayCount
     );
--- WITH T AS(SELECT S.ShipmentID,S.ExpectedArrivalDate,S.ActualArrivalDate,S.OriginalLocation FROM SHIPMENT S WHERE S.ActualArrivalDate IS NOT NULL),DC AS(SELECT T.OriginalLocation,COUNT(*)Delays FROM T WHERE T.ActualArrivalDate>DATEADD(month,6,T.ExpectedArrivalDate)GROUP BY T.OriginalLocation)SELECT D.OriginalLocation FROM DC D WHERE D.Delays=(SELECT MAX(Delays)FROM DC);
+-- WITH T AS(SELECT S.ShipmentID,S.ExpectedArrivalDate,S.ActualArrivalDate,S.OriginalLocation FROM SHIPMENT S WHERE S.ActualArrivalDate IS NOT NULL),DC AS(SELECT T.OriginalLocation,COUNT(*)Delays FROM T WHERE T.ActualArrivalDate>DATEADD(month,6,T.ExpectedArrivalDate)GROUP BY T.OriginalLocation)SELECT D.OriginalLocation, D.Delays FROM DC D WHERE D.Delays=(SELECT MAX(Delays)FROM DC);
