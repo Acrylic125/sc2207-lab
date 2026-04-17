@@ -139,7 +139,7 @@ WHERE EXISTS (
             AND W.[Address] LIKE '%Singapore%'
     )
     AND NOT EXISTS (
-        -- Suppliers who have not supplied to SG warehouses
+        -- Suppliers who have supplied to non-Singapore warehouses
         SELECT 1
         FROM SHIPMENT_HAS_SUPPLIER AS SHS
             INNER JOIN SHIPMENT_TO_WAREHOUSE AS STW ON STW.ShipmentID = SHS.ShipmentID
