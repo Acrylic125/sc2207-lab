@@ -495,9 +495,10 @@ VALUES (1, 5001),
     --TASK 6
     (2, 5028),
     (8, 5029),
-    (2, 5030),
-    --task 7
-    (3, 5031),
+    (2, 5030);
+--task 7
+INSERT INTO CLIENT_HAS_PURCHASEORDER (ClientID, OrderID)
+VALUES (3, 5031),
     (1, 5032),
     (2, 5033);
 -- 12. ITEM (Added SN-1009 to SN-1015)
@@ -1351,9 +1352,10 @@ VALUES (5001, 1),
     (5024, 1),
     (5025, 5),
     (5026, 3),
-    (5027, 8),
-    -- TASK 6
-    (5028, 1),
+    (5027, 8);
+-- TASK 6
+INSERT INTO SUPPLIER_HAS_PURCHASEORDER (OrderID, SupplierID)
+VALUES (5028, 1),
     (5029, 1),
     (5030, 1);
 -- task 7
