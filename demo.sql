@@ -211,25 +211,25 @@ WHERE D.Delays = (
         SELECT MAX(D.Delays)
         FROM DelayCount
     );
--- WITH T AS(SELECT S.ShipmentID,S.ExpectedArrivalDate,S.ActualArrivalDate,S.OriginalLocation FROM SHIPMENT S WHERE S.ActualArrivalDate IS NOT NULL),DC AS(SELECT T.OriginalLocation,COUNT(*)Delays FROM T WHERE T.ActualArrivalDate>DATEADD(month,6,T.ExpectedArrivalDate)GROUP BY T.OriginalLocation)SELECT D.OriginalLocation, D.Delays FROM DC D WHERE D.Delays=(SELECT MAX(Delays)FROM DC);
--- PRODUCTS SUPPOLIED BY SUPPLIERS 2 years ago
--- WITH SUPPLIED_2_YEARS_AGO AS (
---     SELECT S.SupplierID,
---         S.ProductID
---     FROM SUPPLY AS S -- Period is in the format YYYY-QX.
---     WHERE YEAR(GETDATE()) - CAST(LEFT(S.Period, 4) AS INT) = 2
---         AND MONTH(GETDATE()) - CAST(SUBSTRING(S.Period, 6, 2) AS INT) = 0
--- ),
+-- Task 17
 WITH LastSupplied AS (
     SELECT SHS.SupplierID,
-        SP.[Name],
+        SI.ItemSerial,
+        SW.WarehouseID,
+        S.[Name],
         MAX(SH.ExpectedDispatchDate) AS LastDispatch
     FROM SHIPMENT_HAS_SUPPLIER SHS
-        INNER JOIN SHIPMENT SH ON SH.ShipmentID = SHS.ShipmentID
         INNER JOIN SUPPLIER S ON S.SupplierID = SHS.SupplierID
-    GROUP BY SHS.SupplierID
+        INNER JOIN SHIPMENT SH ON SH.ShipmentID = SHS.ShipmentID
+        INNER JOIN SHIPITEM SI ON SI.ShipmentID = SHS.ShipmentID
+        INNER JOIN SHIPMENT_TO_WAREHOUSE SW ON SW.ShipmentID = SHS.ShipmentID
+    GROUP BY SHS.SupplierID,
+        SI.ItemSerial,
+        SW.WarehouseID
 )
 SELECT LS.SupplierID,
-    LS.[Name]
+    LS.[Name],
+    LS.ItemSerial,
+    LS.WarehouseID
 FROM LastSupplied LS
 WHERE LastDispatch < DATEADD(year, -1, GETDATE());
